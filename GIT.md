@@ -1,22 +1,25 @@
 # GIT Modules
 
 
-posix - Add Empty Commit before existing commits
+## posix - Add Empty Commit before existing commits
+All Repos with the same Message for the Genesis will be related.
+you can repeat that to make many repos compatible and clean the history incremental.
+
+git 2.34 defaults to create a Root-Commit branch when you do
+
+```
+git commit --allow-empty -m 'The Unlicense'
+```
+
 ```shell
+OLDBRANCH=$(git branch --show-current)
 
-OLDBASE=$(git rev-list --max-parents=0 HEAD)
+git checkout --orphan newbranch && git rm -rf .
+GENESIS="The Unlicense"
+REPO_INIT="git init && git commit --allow-empty -m 'The Unlicense'"
+# deprecated.
+echo "$(git rev-list --max-parents=0 HEAD) $(git rev-list HEAD)" > .git/info/grafts
 
-# create a new orphan branch and switch to it
-git checkout --orphan newbranch
-git rm -rf .
-# All Repos with the same Message for the Genesis will be related.
-# you can repeat that to make many repos compatible and clean the history incremental.
-REPO_INIT="git init && git commit --allow-empty -m 'First Commit: Genesis'"
-git commit --allow-empty -m "${REPO_INIT}"
-NEWBASE=$(git rev-list HEAD)
-
-OLDBRANCH="master"
-echo "$OLDBASE $NEWBASE" > .git/info/grafts
 git checkout $OLDBRANCH
 git filter-branch
 
