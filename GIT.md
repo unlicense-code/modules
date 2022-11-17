@@ -43,3 +43,22 @@ In the future always create new repositories like this:
 git init && git commit --allow-empty -m 'The Unlicense'
 ```
 so that the first commit is empty, and always available for starting a new independent branch.
+  
+## Updated grafts method
+
+Say you have two git branchs you want to graft:
+
+(a)-(b)-(c) (d)-(e)-(f)
+
+(d) be parent of (c). replacement for (c) with (c1). each ref is a commit hash.
+
+To create the new commit:
+```
+git checkout d && git rm -rf . 
+# create replacement commit with original info
+c1=$(git checkout c -- . && git commit -a -C c)
+git replace c c1
+```
+(c1) which has the correct parent (d).  replace the existing (c) with (c1):
+Now your history looks like this:
+(a)-(b)-(c1)-(d)-(e)-(f)
